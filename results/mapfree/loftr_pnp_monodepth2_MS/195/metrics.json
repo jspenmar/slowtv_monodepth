@@ -1,0 +1,10 @@
+{
+  "Average Median Translation Error": 2.9643151894888504,
+  "Average Median Rotation Error": 52.7346457645446,
+  "Average Median Reprojection Error": 189.98474482405163,
+  "Precision @ Pose Error < (25.0cm, 5deg)": 0.06092124814264487,
+  "AUC @ Pose Error < (25.0cm, 5deg)": 0.18520433608530346,
+  "Precision @ VCRE < 90px": 0.24341483182493584,
+  "AUC @ VCRE < 90px": 0.5059961935997642,
+  "Estimates for % of frames": 1.0
+}

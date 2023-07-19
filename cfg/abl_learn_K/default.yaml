@@ -1,0 +1,68 @@
+# -----------------------------------------------------------------------------
+net:
+  depth:
+    enc_name: 'convnext_tiny'
+    pretrained: True
+    dec_name: 'monodepth'
+    out_scales: [0, 1, 2, 3]
+    use_virtual_stereo: False
+    mask_name: ~
+    num_ch_mask: ~
+    use_stereo_blend: False
+
+  pose:
+    enc_name: 'resnet18'
+    pretrained: True
+    learn_K: False
+# -----------------------------------------------------------------------------
+loss:
+  img_recon:
+    weight: 1
+    use_min: True
+    use_automask: True
+
+  disp_smooth:
+    weight: 0.001
+    use_edges: True
+    use_laplacian: False
+    use_blur: False
+# -----------------------------------------------------------------------------
+dataset: ~
+# -----------------------------------------------------------------------------
+loader:
+  batch_size: 4
+  drop_last: True
+
+  train: { shuffle: True, num_workers: 6 }
+  val: { shuffle: False, num_workers: 1 }
+# -----------------------------------------------------------------------------
+optimizer:
+  type: 'adamw'
+  lr: 0.0001
+# -----------------------------------------------------------------------------
+scheduler:
+  steplr:
+    step_size: 20
+    gamma: 0.1
+
+  linear:
+    start_factor: 0.1
+    total_iters: 2
+# -----------------------------------------------------------------------------
+trainer:
+  max_epochs: 30
+  resume_training: True
+  load_ckpt: ~
+  log_every_n_steps: 100
+  monitor: 'loss'
+
+  benchmark: True
+  gradient_clip_val: ~
+  precision: 32  # 16 is causing NaNs...
+  accumulate_grad_batches: 1
+
+  always_fwd_pose: True
+
+  swa: ~
+  early_stopping: ~
+# -----------------------------------------------------------------------------

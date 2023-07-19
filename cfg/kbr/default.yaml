@@ -1,0 +1,128 @@
+# -----------------------------------------------------------------------------
+net:
+  depth:
+    enc_name: 'convnext_base'
+    pretrained: True
+    dec_name: 'monodepth'
+    out_scales: [0, 1, 2, 3]
+    use_virtual_stereo: False
+    mask_name: ~
+    num_ch_mask: ~
+    use_stereo_blend: False
+
+  pose:
+    enc_name: 'convnext_tiny'
+    pretrained: True
+    learn_K: True
+# -----------------------------------------------------------------------------
+loss:
+  img_recon:
+    weight: 1
+    use_min: True
+    use_automask: True
+
+  disp_smooth:
+    weight: 0.001
+    use_edges: True
+    use_laplacian: False
+    use_blur: False
+# -----------------------------------------------------------------------------
+dataset:
+  kitti_lmdb:
+    split: 'eigen_benchmark'
+    datum: 'image support depth K'
+    supp_idxs: [ -1, 1 ]
+    max_len: 15000
+    randomize: True
+    randomize_supp: True
+
+    train:
+      mode: 'train'
+      use_aug: True
+      shape: [ 376, 1242 ]
+
+    val:
+      mode: 'val'
+      use_aug: False
+      shape: [ 192, 640 ]
+
+  mannequin_lmdb:
+    datum: 'image support K'
+    supp_idxs: [ -1, 1 ]
+    max_len: 15000
+    randomize: True
+    randomize_supp: True
+
+    train:
+      mode: 'train'
+      use_aug: True
+      shape: [ 720, 1280 ]
+
+    val:
+      mode: 'val'
+      use_aug: False
+      shape: [ 384, 640 ]
+
+  slow_tv_lmdb:
+    split: 'all'
+    datum: 'image support K'
+    supp_idxs: [ -1, 1 ]
+    max_len: 30000
+    randomize: True
+    randomize_supp: True
+
+    train:
+      mode: 'train'
+      use_aug: True
+      shape: [ 720, 1280 ]
+
+    val:
+      mode: 'val'
+      use_aug: False
+      shape: [ 384, 640 ]
+# -----------------------------------------------------------------------------
+loader:
+  batch_size: 4
+  drop_last: True
+
+  train: { num_workers: 6, shuffle: True }
+  val: { num_workers: 1, shuffle: False }
+# -----------------------------------------------------------------------------
+optimizer:
+  type: 'adamw'
+  lr: 0.0001
+  weight_decay: 0.001
+# -----------------------------------------------------------------------------
+scheduler:
+  steplr:
+    step_size: 40
+    gamma: 0.1
+
+  linear:
+    start_factor: 0.1
+    total_iters: 4
+# -----------------------------------------------------------------------------
+trainer:
+  max_epochs: 60
+  resume_training: True
+  load_ckpt: ~
+  log_every_n_steps: 100
+  monitor: 'loss'
+
+  min_depth: 0.1
+  max_depth: 100
+
+  aspect_ratio_aug_prob: 0.7
+  aspect_ratio_ref_shape: [ 384, 640 ]
+
+  benchmark: True
+  matmul: 'high'
+  gradient_clip_val: ~
+  precision: 32  # 16 is causing NaNs...
+  accumulate_grad_batches: 2
+
+  always_fwd_pose: False
+
+  swa: ~
+  early_stopping: ~
+# -----------------------------------------------------------------------------

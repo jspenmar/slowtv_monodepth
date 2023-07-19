@@ -1,0 +1,11 @@
+# -----------------------------------------------------------------------------
+dataset:
+  kitti_lmdb:
+    randomize_supp: False
+
+  mannequin_lmdb:
+    randomize_supp: False
+
+  slow_tv_lmdb:
+    randomize_supp: False
+# -----------------------------------------------------------------------------

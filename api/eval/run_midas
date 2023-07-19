@@ -1,0 +1,46 @@
+#! /bin/bash
+
+SPLITS=(
+  kitti_eigen_benchmark
+  kitti_eigen_zhou
+  syns_val
+  syns_test
+  diode_outdoor
+  sintel
+  ddad
+  diode_indoors
+  mc
+  nyud
+  tum
+)
+
+MODES=(
+  lsqr
+  median
+)
+
+MODELS=(
+  MiDaS
+  DPT_Large
+  DPT_BEiT_L_512
+)
+
+function run() {
+  model=${1}; split=${2}; mode=${3};
+  cname=best; overwrite=0; device=cuda
+  save_dir=models/midas/${model}/042/results
+  echo ${model} ${split} ${mode}
+
+  time python api/eval/eval_depth.py --align-mode ${mode} --cfg-file cfg/eval/${split}.yaml \
+    --ckpt midas.${model} --save-file ${save_dir}/${split}_${cname}_${mode}.yaml \
+    --overwrite ${overwrite} --device ${device}
+}
+
+for mode in ${MODES[@]}; do
+  for split in ${SPLITS[@]}; do
+    for model in ${MODELS[@]}; do
+      run ${model} ${split} ${mode}
+    done
+  done
+done
+

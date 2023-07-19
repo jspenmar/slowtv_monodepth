@@ -1,0 +1,17 @@
+# -----------------------------------------------------------------------------
+net:
+  pose:
+    learn_K: False
+# -----------------------------------------------------------------------------
+dataset:
+  kitti_lmdb:
+    split: 'eigen_benchmark'
+    datum: 'image support depth K'
+    shape: [ 192, 640 ]
+    supp_idxs: [ -1, 1 ]
+    max_len: 40000
+    randomize: True
+
+    train: { mode: 'train', use_aug: True }
+    val: { mode: 'val', use_aug: False }
+# -----------------------------------------------------------------------------

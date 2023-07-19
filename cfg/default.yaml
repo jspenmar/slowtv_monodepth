@@ -1,0 +1,179 @@
+# -----------------------------------------------------------------------------
+net:
+  # Depth estimation network.
+  depth:
+    enc_name: 'convnext_base'  # Choose from `timm` or dpt encoders.
+    pretrained: True
+    dec_name: 'monodepth'  # Choose from different decoders.
+    out_scales: [ 0, 1, 2, 3 ]
+    use_virtual_stereo: True  # Virtual stereo prediction consistency. From Monodepth.
+    mask_name: 'explainability'  # Reconstruction loss automasking. From SfM-Learner and Klodt.
+    num_ch_mask: 3  # Should match the number of support images.
+    use_stereo_blend: True  # Online virtual stereo blending. From SuperDepth.
+
+  # Autoencoder network for feature learning. From Feat-Depth.
+  autoencoder:
+    enc_name: 'resnet18'
+    pretrained: True
+    dec_name: 'monodepth'
+    out_scales: [ 0, 1, 2, 3 ]
+
+  # Relative pose estimation network. From SfM-Learner.
+  pose:
+    enc_name: 'resnet18'
+    pretrained: True
+    learn_K: True  # Predict camera intrinsics.
+# -----------------------------------------------------------------------------
+loss:
+  # NOTE: Each loss must have a `weight` parameter, determining its contribution to the final loss.
+  # Other parameters are based on each losses' kwargs.
+
+  # Image-based reconstruction loss.
+  img_recon:
+    weight: 1
+    loss_name: 'ssim'
+    use_min: True  # Min reduction. From Monodepth2.
+    use_automask: True  # Static pixel automasking. From Monodepth2.
+
+  # Feature-based reconstruction loss. From FeatDepth, Feat-VO-Depth.
+  feat_recon:
+    weight: 0.01
+    loss_name: 'l2'
+    use_min: True
+    use_automask: True
+
+  # Autoencoder image reconstruction. From FeatDepth.
+  autoenc_recon:
+    weight: 1
+    loss_name: 'ssim'
+
+  # Virtual stereo consistency. From Monodepth.
+  stereo_const:
+    weight: 1
+    loss_name: 'l1'
+
+  # Proxy depth regression.
+  depth_regr:
+    weight: 1
+    loss_name: 'log_l1'  # Choose from different losses. From DepthHints, Kuznietsov, DVSO, MonoResMatch.
+    use_automask: True  # Proxy depth automasking. From DepthHints.
+
+   # Disparity smoothness regularization.
+  disp_smooth:
+    weight: 0.001
+    use_edges: True  # Edge-aware weighting. From Monodepth.
+    use_laplacian: False  # Second-order smoothness. From DVSO.
+    use_blur: False  # Blur input disp/images prior to edge detection.
+
+  # First-order feature peakiness regularization. From Feat-Depth.
+  feat_peaky:
+    weight: 0.0001
+    use_edges: True
+
+  # Second-order feature smoothness regularization. From Feat-Depth.
+  feat_smooth:
+    weight: 0.0001
+    use_edges: True
+
+  # Occlusion regularization. From DVSO.
+  disp_occ:
+    weight: 0.01
+
+  # Reconstruction mask BCE regularization. From SfM-Learner.
+  disp_mask:
+    weight: 0.2
+# -----------------------------------------------------------------------------
+dataset:
+  kitti_lmdb:
+    split: 'eigen_benchmark'
+    datum: 'image support depth K'
+    supp_idxs: [ -1, 1 ]
+    max_len: 15000  # Number of samples to load.
+    randomize: True  # Randomize sample order.
+    randomize_supp: True   # Randomize the indices of the support frames
+    augmentations: { photo: 0.3, flip: 0.3, auto: 0.3, cutout: 0.3 }  # Individual augmentation probabilities.
+
+    # NOTE: When using the aspect ratio augmentation, the training images should be loaded at full resolution.
+    # The aspect ratio augmentation will then resize the images to a smaller resolution.
+    # Validation images should be at the target resolution directly.
+    train: { mode: 'train', use_aug: True, shape: [ 376, 1242 ] }
+    val: { mode: 'val', use_aug: False, shape: [ 192, 640 ] }
+
+  mannequin_lmdb:
+    datum: 'image support K'
+    supp_idxs: [ -1, 1 ]
+    max_len: 15000
+    randomize: True
+    randomize_supp: True
+    augmentations: { photo: 0.3, flip: 0.3, auto: 0.3, cutout: 0.3 }
+
+    train: { mode: 'train', use_aug: True, shape: [ 720, 1280 ] }
+    val: { mode: 'val', use_aug: False, shape: [ 384, 640 ] }
+
+  slow_tv_lmdb:
+    split: 'all'
+    datum: 'image support K'
+    supp_idxs: [ -1, 1 ]
+    max_len: 30000
+    randomize: True
+    randomize_supp: True
+    augmentations: { photo: 0.3, flip: 0.3, auto: 0.3, cutout: 0.3 }
+
+    train: { mode: 'train', use_aug: True, shape: [ 720, 1280 ] }
+    val: { mode: 'val', use_aug: False, shape: [ 384, 640 ] }
+# -----------------------------------------------------------------------------
+loader:
+  # Pin memory is enabled by default.
+
+  batch_size: 8
+  num_workers: 8
+  drop_last: True
+
+  train: { shuffle: True }
+  val: { shuffle: False }
+# -----------------------------------------------------------------------------
+optimizer:
+  type: 'adamw'  # Choose from any optimizer available from `timm`.
+  lr: 0.0001
+  weight_decay: 0.0001
+
+  backbone_lr: 0.00001  # Smaller learning rate applied to the pretrained backbones.
+
+  # Additional parameters based on optimizer type. E.g. momentum, nesterov...
+# -----------------------------------------------------------------------------
+scheduler:
+  steplr:
+    step_size: 40
+    gamma: 0.1
+
+  linear:
+    start_factor: 0.1
+    total_iters: 4
+
+  # Additional parameters based on scheduler type.
+# -----------------------------------------------------------------------------
+trainer:
+  max_epochs: 60
+  resume_training: True  # Will begin training from scratch if no checkpoints are found. Otherwise resume.
+  load_ckpt: ~  # Optional model with pretrained weights.
+  log_every_n_steps: 100  # Steps between scalar logging.
+  monitor: 'AbsRel'  # Monitor metric to save `best` checkpoint.
+
+  min_depth: 0.1  # Min depth to scale sigmoid disparity.
+  max_depth: 100  # Max depth to scale sigmoid disparity.
+
+  aspect_ratio_aug_prob: 0.7  # Probability of applying the aspect ratio augmentation.
+  aspect_ratio_ref_shape: [ 384, 640 ]  # Reference shape to use when resizing augmented images.
+
+  logger: 'wandb'  # Choose from {wandb, tensorboard}
+
+  benchmark: True  # Pytorch cudnn benchmark.
+  matmul: 'high'  # Sets pytorch matmul accuracy.
+  compile: False  # Enables pytorch 2.0 compilation. Not thoroughly tested.
+  gradient_clip_val: ~  # Clip by gradient norm.
+  precision: 32  # 16 is causing NaNs...
+  accumulate_grad_batches: 1
+
+  swa: ~  # Enable Stochastic Weight Averaging. Not thoroughly tested.
+  early_stopping: ~ # Enable early model stopping. Not thoroughly tested.
+# -----------------------------------------------------------------------------

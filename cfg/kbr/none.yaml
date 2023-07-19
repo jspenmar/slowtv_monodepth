@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------------------
+net:
+  pose:
+    learn_K: False
+# -----------------------------------------------------------------------------
+dataset:
+  kitti_lmdb:
+    randomize_supp: False
+    train:
+      shape: [ 192, 640 ]
+
+  mannequin_lmdb:
+    randomize_supp: False
+    train:
+      shape: [ 384, 640 ]
+
+  slow_tv_lmdb:
+    randomize_supp: False
+    train:
+      shape: [ 384, 640 ]
+# -----------------------------------------------------------------------------
+trainer:
+  always_fwd_pose: True
+  aspect_ratio_aug_prob: 0
+# -----------------------------------------------------------------------------

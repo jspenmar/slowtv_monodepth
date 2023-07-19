@@ -1,0 +1,51 @@
+#! /bin/bash
+
+OUT_SPLITS=(
+  kitti_eigen_benchmark
+  kitti_eigen_zhou
+  syns_val
+  syns_test
+  diode_outdoor
+  sintel
+  ddad
+)
+
+IN_SPLITS=(
+  mc
+  diode_indoors
+  nyud
+  tum
+)
+
+MODES=(
+  lsqr
+  median
+  1
+)
+
+function get_name() { if [ ${1} == 1 ]; then echo metric; else echo ${1}; fi }
+
+function run() {
+  model=${1}; split=${2}; mode=${3}; name=$(get_name ${mode})
+  cname=best; overwrite=0; device=cuda
+  save_dir=models/newcrfs/newcrfs/042/results
+  echo ${split} ${mode} ${name}
+
+  time python api/eval/eval_depth.py --align-mode ${mode} --cfg-file cfg/eval/${split}.yaml \
+    --ckpt ${model} --save-file ${save_dir}/${split}_${cname}_${name}.yaml \
+    --overwrite ${overwrite} --device ${device}
+}
+
+MODEL=outdoor
+for mode in ${MODES[@]}; do
+  for split in ${OUT_SPLITS[@]}; do
+    run newcrfs.${MODEL} ${split} ${mode}
+  done
+done
+
+MODEL=indoor
+for mode in ${MODES[@]}; do
+  for split in ${IN_SPLITS[@]}; do
+    run newcrfs.${MODEL} ${split} ${mode}
+  done
+done

@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------------------
+net:
+  depth:
+    use_virtual_stereo: True
+
+  pose: ~
+# -----------------------------------------------------------------------------
+loss:
+  stereo_const:
+    weight: 1
+    loss_name: 'l1'
+
+  depth_regr:
+    weight: 1
+    loss_name: 'berhu'
+    use_automask: False
+    invert: True
+# -----------------------------------------------------------------------------
+dataset:
+  kitti_lmdb:
+    supp_idxs: [ 0 ]
+
+    train: { datum: 'image support depth_velo depth_hint K' }
+    val: { datum: 'image support depth depth_hint K' }
+# -----------------------------------------------------------------------------

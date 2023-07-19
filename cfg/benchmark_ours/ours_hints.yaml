@@ -1,0 +1,24 @@
+# -----------------------------------------------------------------------------
+net:
+  depth:
+    dec_name: 'hrdepth'
+# -----------------------------------------------------------------------------
+loss:
+  img_recon:
+    use_min: False
+    use_automask: False
+
+  depth_regr:
+    weight: 1
+    loss_name: 'log_l1'
+    use_automask: True
+
+  disp_smooth: ~
+# -----------------------------------------------------------------------------
+dataset:
+  kitti_lmdb:
+    supp_idxs: [ -1, 1, 0 ]
+
+    train: { datum: 'image support depth_velo depth_hint K' }
+    val: { datum: 'image support depth depth_hint K' }
+# -----------------------------------------------------------------------------
