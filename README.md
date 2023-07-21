@@ -14,9 +14,7 @@ This repository contains the code associated with the following publications:
 > and 
 > [Richard Bowden](http://personal.ee.surrey.ac.uk/Personal/R.Bowden/)
 >
-> [ArXiv]() (ICCV 2023)
-
-[//]: # (TODO GITHUB: Add SlowTV link)
+> [ArXiv](https://arxiv.org/abs/2307.10713) (ICCV 2023)
 
 > **Deconstructing Self-Supervised Monocular Reconstruction: The Design Decisions that Matter**
 >
@@ -211,7 +209,7 @@ Please consider citing them in your own work.
 | FeatDepth     | Feature-metric Loss for Self-supervised Learning of Depth and Egomotion                                  | Shu et. al          | ECCV 2020 | [ArXiv](https://arxiv.org/abs/2007.10603)                                                                         | [GitHub](https://github.com/sconlyshootery/FeatDepth)                |
 | CADepth       | Channel-Wise Attention-Based Network for Self-Supervised Monocular Depth Estimation                      | Yan et. al          | 3DV 2021  | [ArXiv](https://arxiv.org/abs/2112.13047)                                                                         | [GitHub](https://github.com/kamiLight/CADepth-master)                |
 | DiffNet       | Self-Supervised Monocular Depth Estimation with Internal Feature Fusion                                  | Zhou et. al         | BMVC 2021 | [ArXiv](https://arxiv.org/abs/2110.09482)                                                                         | [GitHub](https://github.com/brandleyzhou/DIFFNet)                    |
-| HR-Depth      | HR-Depth: High Resolution Self-Supervised Monocular Depth Estimation                                     | Lyu et. al          | CAI 2021  | [ArXiv](https://arxiv.org/abs/2110.09482)                                                                         | [GitHub](https://github.com/shawLyu/HR-Depth)                        |          
+| HR-Depth      | HR-Depth: High Resolution Self-Supervised Monocular Depth Estimation                                     | Lyu et. al          | AAAI 2021  | [ArXiv](https://arxiv.org/abs/2012.07356)                                                                         | [GitHub](https://github.com/shawLyu/HR-Depth)                        |          
 | MiDaS         | Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer          | Ranftl el. al       | PAMI 2020 | [ArXiv](https://arxiv.org/abs/1907.01341v3)                                                                       | [GitHub](https://github.com/isl-org/MiDaS)                           |
 | DPT           | Vision Transformers for Dense Prediction                                                                 | Ranftl el. al       | ICCV 2021 | [ArXiv](https://arxiv.org/abs/2103.13413)                                                                         | [GitHub](https://github.com/isl-org/DPT)                             |
 | NeWCRFs       | NeW CRFs: Neural Window Fully-connected CRFs for Monocular Depth Estimation                              | Weihao el. al       | CVPR 2022 | [ArXiv](https://arxiv.org/abs/2203.01502)                                                                         | [GitHub](https://github.com/aliyun/NeWCRFs)                          |
