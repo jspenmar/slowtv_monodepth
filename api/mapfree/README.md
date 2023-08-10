@@ -55,6 +55,16 @@ You will need to modify `MAPFREE_ROOT` and `MAPFREE_PY` to point to the correct 
 
 ---
 
+## Saving Predictions
+
+If you want to save the model's predictions (e.g. to allow others to use them in their submission), run the following:
+
+```shell
+find ./mapfree -name "*.<NAME1>.png" -o -name "*.<NAME2>.png" | tar -czvf mapfree_<NAME>_depth -T -
+```
+
+---
+
 ## Deleting Predictions
 
 After running the evaluations you may want to delete the intermediate predictions. 

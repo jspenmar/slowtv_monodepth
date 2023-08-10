@@ -30,23 +30,23 @@ This repository contains the code associated with the following publications:
 > Check the [MDEC](https://jspenmar.github.io/MDEC/) website for details on previous editions! 
 
 <p align="center">
-<img src="./assets/syns/image_0026.png" alt="image_0026"  width="33%"/>
-<img src="./assets/syns/image_0254.png" alt="image_0254"  width="33%"/>
-<img src="./assets/syns/image_0698.png" alt="image_0698"  width="33%"/>
+<img src="./assets/syns/image_0026.png" alt="image_0026"  width="32%"/>
+<img src="./assets/syns/image_0254.png" alt="image_0254"  width="32%"/>
+<img src="./assets/syns/image_0698.png" alt="image_0698"  width="32%"/>
  
-<img src="./assets/syns/depth_0026.png" alt="depth_0026"  width="33%"/>
-<img src="./assets/syns/depth_0254.png" alt="depth_0254"  width="33%"/>
-<img src="./assets/syns/depth_0698.png" alt="depth_0698"  width="33%"/>
+<img src="./assets/syns/depth_0026.png" alt="depth_0026"  width="32%"/>
+<img src="./assets/syns/depth_0254.png" alt="depth_0254"  width="32%"/>
+<img src="./assets/syns/depth_0698.png" alt="depth_0698"  width="32%"/>
 </p>
 
 <p align="center">
-<img src="./assets/slowtv/00_natural.png" alt="image_0026"  width="33%"/>
-<img src="./assets/slowtv/00_driving.png" alt="image_0254"  width="33%"/>
-<img src="./assets/slowtv/00_underwater.png" alt="image_0698"  width="33%"/>
+<img src="./assets/slowtv/00_natural.png" alt="image_0026"  width="32%"/>
+<img src="./assets/slowtv/00_driving.png" alt="image_0254"  width="32%"/>
+<img src="./assets/slowtv/00_underwater.png" alt="image_0698"  width="32%"/>
  
-<img src="./assets/slowtv/03_natural.png" alt="depth_0026"  width="33%"/>
-<img src="./assets/slowtv/03_driving.png" alt="depth_0254"  width="33%"/>
-<img src="./assets/slowtv/03_underwater.png" alt="depth_0698"  width="33%"/>
+<img src="./assets/slowtv/03_natural.png" alt="depth_0026"  width="32%"/>
+<img src="./assets/slowtv/03_driving.png" alt="depth_0254"  width="32%"/>
+<img src="./assets/slowtv/03_underwater.png" alt="depth_0698"  width="32%"/>
 </p>
 
 ---
@@ -82,6 +82,17 @@ This is probably what you want if you just want to try out the model, as opposed
 Code illustrating how to align the predictions to a ground-truth depth map can be found [here](./api/quickstart/align.py).
 
 The only requirements for running the model are: `timm`, `torch` and `numpy`
+
+---
+
+## MapFreeReloc
+
+You can download the val/test MapFreeReloc predictions for our public model from:
+
+* KBR: https://www.dropbox.com/scl/fi/xy95m4xl5qlqvu6bpn9ba/mapfree_kbr_depth.tar.gz?rlkey=tjg8xbgsowd9fbkvw7uusg53m&dl=0
+
+These can be used in your own MapFreeReloc submission to replace the baseline DPT+KITTI.
+Please remember to [cite us](#citation) if doing so!
 
 ---
 
@@ -173,6 +184,15 @@ cp -r ./results/* ./models
 ## Citation
 If you used the code in this repository or found the papers interesting, please cite them as
 ```text
+@inproceedings{spencer2023slowtv,
+title={Kick Back & Relax: Learning to Reconstruct the World by Watching SlowTV},
+author={Jaime Spencer and Chris Russell and Simon Hadfield and Richard Bowden},
+booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+year={2023}
+}
+```
+
+```text
 @article{spencer2022deconstructing,
 title={Deconstructing Self-Supervised Monocular Reconstruction: The Design Decisions that Matter},
 author={Jaime Spencer and Chris Russell and Simon Hadfield and Richard Bowden},
@@ -182,8 +202,6 @@ year={2022},
 url={https://openreview.net/forum?id=GFK1FheE7F},
 note={Reproducibility Certification}
 }
-
-TODO GITHUB: Add SlowTV citation
 ```
 
 ---
