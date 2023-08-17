@@ -1,51 +1,29 @@
-FROM nvidia/cuda:11.7.0-cudnn8-devel-ubuntu20.04
+FROM nvcr.io/nvidia/nvhpc:23.5-devel-cuda_multi-ubuntu22.04
+ENV DEBIAN_FRONTEND="noninteractive"
+ENV PYTHONUNBUFFERED=1
+RUN apt-get update && apt-get install -y \
+  python3-pip \
+  git \
+  wget \
+  && rm -rf /var/lib/apt/lists/* \
+  && pip install --no-cache-dir --upgrade pip
 
-ARG DEBIAN_FRONTEND=noninteractive
+WORKDIR /app
 
-RUN rm /etc/apt/sources.list.d/cuda.list
-RUN #rm /etc/apt/sources.list.d/nvidia-ml.list
-RUN apt-key del 7fa2af80
-RUN apt-get update && apt-get install -y --no-install-recommends wget
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-keyring_1.0-1_all.deb
-RUN dpkg -i cuda-keyring_1.0-1_all.deb
+# clone the repository and get model
+RUN git clone https://github.com/jspenmar/slowtv_monodepth.git slow-tv
+RUN mkdir slow-tv/models && wget --output-document slow-tv/models/kbr.ckpt 'https://www.dropbox.com/s/o8j4wyhnhgvh4o7/kbr.ckpt?dl=0'
 
-RUN apt-get -y update
+COPY requirements.txt .
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get install -y \
-    build-essential \
-    cmake \
-    ninja-build \
-    git \
-    wget \
-    rsync \
-    ffmpeg \
-    htop \
-    nano \
-    libatlas-base-dev \
-    libboost-all-dev \
-    libeigen3-dev \
-    libhdf5-serial-dev \
-    libleveldb-dev \
-    liblmdb-dev \
-    libopenblas-dev \
-    libopenblas-base \
-    libsm6 \
-    libxext6 \
-    libxrender-dev
+ENV PYTHONPATH /app/slow-tv
+ENV DEVICE cpu
 
-RUN apt-get autoremove -y && \
-    apt-get autoclean -y && \
-    apt-get clean -y  && \
-    rm -rf /var/lib/apt/lists/*
+VOLUME /images
 
-ENV WRKSPCE="/workspace"
-
-RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-    && bash Miniconda3-latest-Linux-x86_64.sh -b -p $WRKSPCE/miniconda3 \
-    && rm -f Miniconda3-latest-Linux-x86_64.sh
-
-ENV PATH="$WRKSPCE/miniconda3/bin:${PATH}"
-
-COPY environment.yml .
-RUN conda env update -n base --file environment.yml --prune && \
-    conda clean -y --all
+ENTRYPOINT python3 /app/slow-tv/api/quickstart/run.py \
+  --ckpt-file /app/slow-tv/models/kbr.ckpt \
+  --device $DEVICE \
+  --img-dir /images/in \
+  --out-dir /images/out
